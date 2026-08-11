@@ -60,8 +60,8 @@
     {
       "idx": 8,
       "version": "6",
-      "when": 1786600341582,
-      "tag": "0008_next_mantis",
+      "when": 1786600614520,
+      "tag": "0008_unique_sprite",
       "breakpoints": true
     }
   ],
