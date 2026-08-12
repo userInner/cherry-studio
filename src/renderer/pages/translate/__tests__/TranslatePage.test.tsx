@@ -9,7 +9,7 @@ import type React from 'react'
 import { useEffect } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type * as TranslationFilesModule from '../translationFiles'
+import type { TranslationFiles } from '../translationFiles'
 
 const fileMock = vi.hoisted(() => ({
   onSelectFile: vi.fn(),
@@ -64,7 +64,12 @@ const languageBarMock = vi.hoisted(() => vi.fn())
 const exportContentToNotesMock = vi.hoisted(() => vi.fn())
 const pdfViewMock = vi.hoisted(() => vi.fn())
 const pdfHandleMock = vi.hoisted(() => ({ cancel: vi.fn(), start: vi.fn() }))
-const loadTranslationFilesMock = vi.hoisted(() => vi.fn())
+const historyFilesMock = vi.hoisted(() => ({
+  files: {
+    source: { entryId: 'entry-source', path: '/tmp/paper.pdf' },
+    target: { entryId: 'entry-target', path: '/tmp/files/entry-target.pdf' }
+  } as TranslationFiles
+}))
 
 vi.mock('react-i18next', () => ({
   initReactI18next: {
@@ -254,14 +259,17 @@ vi.mock('../components/TranslateHistory', () => ({
     onHistoryItemClick
   }: {
     isOpen: boolean
-    onHistoryItemClick: (history: {
-      id?: string
-      kind: 'text' | 'file'
-      sourceText: string
-      targetText: string
-      sourceLanguage: string | null
-      targetLanguage: string | null
-    }) => void
+    onHistoryItemClick: (
+      history: {
+        id?: string
+        kind: 'text' | 'file'
+        sourceText: string
+        targetText: string
+        sourceLanguage: string | null
+        targetLanguage: string | null
+      },
+      files?: TranslationFiles
+    ) => void
   }) =>
     isOpen ? (
       <div data-testid="translate-history-open">
@@ -282,24 +290,21 @@ vi.mock('../components/TranslateHistory', () => ({
           type="button"
           aria-label="reuse-pdf-history"
           onClick={() =>
-            onHistoryItemClick({
-              id: 'history-pdf',
-              kind: 'file',
-              sourceText: 'paper.pdf',
-              targetText: 'paper.zh-CN.pdf',
-              sourceLanguage: null,
-              targetLanguage: null
-            })
+            onHistoryItemClick(
+              {
+                id: 'history-pdf',
+                kind: 'file',
+                sourceText: 'paper.pdf',
+                targetText: 'paper.zh-CN.pdf',
+                sourceLanguage: null,
+                targetLanguage: null
+              },
+              historyFilesMock.files
+            )
           }
         />
       </div>
     ) : null
-}))
-
-vi.mock('../translationFiles', async (importOriginal) => ({
-  ...(await importOriginal<typeof TranslationFilesModule>()),
-  loadTranslationFiles: loadTranslationFilesMock,
-  saveTranslationFileAs: vi.fn()
 }))
 
 vi.mock('../components/TranslateInputPane', () => ({
@@ -499,7 +504,10 @@ describe('TranslatePage', () => {
     pdfViewMock.mockReset()
     pdfHandleMock.cancel.mockReset()
     pdfHandleMock.start.mockReset()
-    loadTranslationFilesMock.mockReset()
+    historyFilesMock.files = {
+      source: { entryId: 'entry-source', path: '/tmp/paper.pdf' },
+      target: { entryId: 'entry-target', path: '/tmp/files/entry-target.pdf' }
+    }
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: {
@@ -1553,11 +1561,6 @@ describe('TranslatePage', () => {
   })
 
   it('restores the side-by-side preview when reusing a PDF history entry', async () => {
-    loadTranslationFilesMock.mockResolvedValueOnce({
-      source: { entryId: 'entry-source', path: '/tmp/paper.pdf' },
-      target: { entryId: 'entry-target', path: '/tmp/files/entry-target.pdf' }
-    })
-
     render(<TranslatePage />)
 
     fireEvent.click(screen.getByRole('button', { name: 'translate.history.title' }))
@@ -1571,7 +1574,7 @@ describe('TranslatePage', () => {
   })
 
   it('reports a PDF history entry whose files are gone instead of opening an empty preview', async () => {
-    loadTranslationFilesMock.mockResolvedValueOnce({ source: null, target: null })
+    historyFilesMock.files = { source: null, target: null }
 
     render(<TranslatePage />)
 
@@ -1587,10 +1590,10 @@ describe('TranslatePage', () => {
     fileMock.onSelectFile.mockResolvedValue([
       { name: 'current.pdf', path: '/tmp/current.pdf', size: 10, type: 'document' }
     ])
-    loadTranslationFilesMock.mockResolvedValueOnce({
+    historyFilesMock.files = {
       source: null,
       target: { entryId: 'entry-target', path: '/tmp/files/entry-target.pdf' }
-    })
+    }
 
     render(<TranslatePage />)
     fireEvent.click(screen.getByRole('button', { name: 'translate.files.upload' }))
