@@ -25,4 +25,22 @@ describe('builtinMcpServers', () => {
     expect(server && isInMemoryBuiltinMcpServer(server)).toBe(true)
     expect(server).not.toHaveProperty('disabledAutoApproveTools')
   })
+
+  it('keeps native desktop Computer Use disabled and forces approval for sensitive tools', () => {
+    const server = builtinMcpServers.find(({ name }) => name === BuiltinMcpServerNames.computer)
+
+    expect(server).toEqual(
+      expect.objectContaining({
+        type: 'inMemory',
+        isActive: false,
+        disabledAutoApproveTools: expect.arrayContaining([
+          'screenshot',
+          'list_windows',
+          'click',
+          'type_text',
+          'press_keys'
+        ])
+      })
+    )
+  })
 })

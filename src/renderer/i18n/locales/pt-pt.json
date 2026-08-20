@@ -5772,6 +5772,7 @@
       "builtinServersDescriptions": {
         "brave_search": "uma implementação de servidor MCP integrada com a API de pesquisa Brave, fornecendo funcionalidades de pesquisa web e local. Requer a configuração da variável de ambiente BRAVE_API_KEY",
         "browser": "Controla uma janela Electron headless via Chrome DevTools Protocol. Ferramentas: abrir URL, executar JS de linha única, reiniciar sessão.",
+        "computer": "Controlo nativo do ambiente de trabalho para captura de ecrã, foco de janelas, rato, teclado e deslocamento. Desativado por predefinição; requer aprovação por ação e permissões do sistema.",
         "didi_mcp": "Servidor DiDi MCP que fornece serviços de transporte incluindo pesquisa de mapas, estimativa de preços, gestão de pedidos e rastreamento de motoristas. Disponível apenas na China Continental. Requer configuração da variável de ambiente DIDI_API_KEY",
         "dify_knowledge": "Implementação do servidor MCP do Dify, que fornece uma API simples para interagir com o Dify. Requer a configuração da chave Dify",
         "fetch": "servidor MCP para obter o conteúdo da página web do URL",

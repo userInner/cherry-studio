@@ -5772,6 +5772,7 @@
       "builtinServersDescriptions": {
         "brave_search": "Một máy chủ MCP triển khai tích hợp API Tìm kiếm Brave, cung cấp cả chức năng tìm kiếm web và địa phương. Yêu cầu cấu hình biến môi trường BRAVE_API_KEY",
         "browser": "Điều khiển cửa sổ Electron không giao diện qua Chrome DevTools Protocol. Công cụ: mở URL, thực thi JS một dòng, đặt lại phiên.",
+        "computer": "Computer Use gốc cho máy tính để chụp màn hình, lấy nét cửa sổ, điều khiển chuột, bàn phím và cuộn. Mặc định tắt; mỗi thao tác cần phê duyệt và quyền hệ điều hành.",
         "didi_mcp": "Máy chủ MCP DiDi cung cấp dịch vụ đặt xe bao gồm tìm kiếm bản đồ, ước tính giá, quản lý đơn hàng và theo dõi tài xế. Chỉ khả dụng tại Trung Quốc Đại lục. Yêu cầu cấu hình biến môi trường DIDI_API_KEY",
         "dify_knowledge": "Triển khai máy chủ MCP của Dify cung cấp một API đơn giản để tương tác với Dify. Yêu cầu cấu hình Khóa Dify",
         "fetch": "MCP server để lấy nội dung web từ URL",

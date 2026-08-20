@@ -533,6 +533,7 @@
     "@node-rs/xxhash-linux-x64-musl": "1.7.6",
     "@node-rs/xxhash-win32-arm64-msvc": "1.7.6",
     "@node-rs/xxhash-win32-x64-msvc": "1.7.6",
+    "@nut-tree-fork/nut-js": "4.2.6",
     "node-mac-permissions": "^2.5.0",
     "node-screenshots-darwin-arm64": "0.2.8",
     "node-screenshots-darwin-x64": "0.2.8",

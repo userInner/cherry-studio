@@ -34,6 +34,7 @@ import {
   getBuiltinAgentPluginDirectory,
   loadBuiltinAgentDefinition
 } from '@main/ai/agents/builtin/BuiltinAgentProvisioner'
+import { COMPUTER_APPROVAL_REQUIRED_TOOL_NAMES } from '@main/ai/mcp/servers/computer'
 import {
   buildAgentMcpServers,
   type LinkedChannelSnapshot,
@@ -78,6 +79,7 @@ import {
   WEB_FETCH_TOOL_NAME,
   WEB_SEARCH_TOOL_NAME
 } from '@shared/ai/builtinTools'
+import { buildMcpWireToolId } from '@shared/ai/tools/mcpSourcePolicy'
 import { toCamelCase } from '@shared/ai/tools/mcpToolName'
 import type { AgentEntity } from '@shared/data/api/schemas/agents'
 import type { AgentSessionEntity } from '@shared/data/api/schemas/agentSessions'
@@ -202,15 +204,19 @@ const HEADLESS_CONFIG_MUTATION_ACTIONS = new Set([
 ])
 const CHERRY_BUILTIN_APPROVAL_REQUIRED_RUNTIME_NAMES =
   CHERRY_BUILTIN_APPROVAL_REQUIRED_TOOL_NAMES.map(toCherryBuiltinRuntimeName)
+const COMPUTER_APPROVAL_REQUIRED_RUNTIME_NAMES = COMPUTER_APPROVAL_REQUIRED_TOOL_NAMES.map((name) =>
+  buildMcpWireToolId('@cherry/computer', name)
+)
 
 function approvalRequiredRuntimeNames(assistantMcpEnabled: boolean): readonly string[] {
   return assistantMcpEnabled
     ? [
         ...CHERRY_BUILTIN_APPROVAL_REQUIRED_RUNTIME_NAMES,
+        ...COMPUTER_APPROVAL_REQUIRED_RUNTIME_NAMES,
         ...ASSISTANT_APPROVAL_REQUIRED_RUNTIME_NAMES,
         ...ASSISTANT_FILE_APPROVAL_REQUIRED_RUNTIME_NAMES
       ]
-    : CHERRY_BUILTIN_APPROVAL_REQUIRED_RUNTIME_NAMES
+    : [...CHERRY_BUILTIN_APPROVAL_REQUIRED_RUNTIME_NAMES, ...COMPUTER_APPROVAL_REQUIRED_RUNTIME_NAMES]
 }
 const WORKSPACE_PATH_FIELDS = {
   Edit: 'file_path',

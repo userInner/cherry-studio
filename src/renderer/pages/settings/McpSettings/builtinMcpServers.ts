@@ -11,6 +11,18 @@ import { type BuiltinMcpServer, BuiltinMcpServerNames } from '@shared/utils/mcp'
 import { nanoid } from 'nanoid'
 
 const filesystemManualApprovalTools = ['write', 'edit', 'delete'] as const
+const computerManualApprovalTools = [
+  'request_permissions',
+  'list_windows',
+  'focus_window',
+  'screenshot',
+  'move_pointer',
+  'click',
+  'drag',
+  'scroll',
+  'type_text',
+  'press_keys'
+] as const
 
 /**
  * User-installable built-in MCP servers shown in the UI.
@@ -155,6 +167,16 @@ export const builtinMcpServers: BuiltinMcpServer[] = [
     name: BuiltinMcpServerNames.browser,
     type: 'inMemory',
     isActive: false,
+    provider: 'CherryAI',
+    installSource: 'builtin',
+    isTrusted: true
+  },
+  {
+    id: nanoid(),
+    name: BuiltinMcpServerNames.computer,
+    type: 'inMemory',
+    isActive: false,
+    disabledAutoApproveTools: [...computerManualApprovalTools],
     provider: 'CherryAI',
     installSource: 'builtin',
     isTrusted: true

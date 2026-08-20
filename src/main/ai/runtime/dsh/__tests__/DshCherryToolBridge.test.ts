@@ -30,7 +30,9 @@ vi.mock('@application', () => ({
   application: { get: () => ({ refreshTools: mocks.refreshTools }) }
 }))
 
-const { buildDshCherryToolBridge, buildDshCherryToolName } = await import('../DshCherryToolBridge')
+const { buildDshCherryToolBridge, buildDshCherryToolName, DSH_APPROVAL_REQUIRED_BRIDGED_TOOLS } = await import(
+  '../DshCherryToolBridge'
+)
 
 function createServer(
   tools: Tool[],
@@ -70,6 +72,12 @@ afterEach(async () => {
 })
 
 describe('DshCherryToolBridge', () => {
+  it('keeps native desktop actions approval-required under every permission mode', () => {
+    expect(DSH_APPROVAL_REQUIRED_BRIDGED_TOOLS.has(buildDshCherryToolName('@cherry/computer', 'screenshot'))).toBe(true)
+    expect(DSH_APPROVAL_REQUIRED_BRIDGED_TOOLS.has(buildDshCherryToolName('@cherry/computer', 'click'))).toBe(true)
+    expect(DSH_APPROVAL_REQUIRED_BRIDGED_TOOLS.has(buildDshCherryToolName('@cherry/computer', 'type_text'))).toBe(true)
+  })
+
   it('preserves provider-safe names and keeps lossy long identities distinct', () => {
     expect(buildDshCherryToolName('github', 'search_issues')).toBe('mcp__github__search_issues')
     const prefix = 'tool with a shared prefix '.repeat(4)

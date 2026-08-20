@@ -53,6 +53,10 @@ export async function createInMemoryMcpServer(
       const { BrowserServer } = await import('./browser')
       return new BrowserServer().server
     }
+    case BuiltinMcpServerNames.computer: {
+      const { ComputerServer } = await import('./computer')
+      return new ComputerServer().server
+    }
     default:
       throw new Error(`Unknown in-memory MCP server: ${name}`)
   }

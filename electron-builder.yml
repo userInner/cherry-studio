@@ -86,6 +86,7 @@ asarUnpack:
   - "node_modules/@firecrawl/anydoc-*/**" # native N-API binary must be unpacked for runtime loading
   - "node_modules/node-screenshots-*/**" # native N-API binary must be unpacked for runtime loading
   - "node_modules/node-mac-permissions/**" # native N-API binary must be unpacked for runtime loading
+  - "node_modules/@nut-tree-fork/libnut*/**" # native desktop input driver and platform binaries
 extraResources:
   - from: "migrations/sqlite-drizzle"
     to: "migrations/sqlite-drizzle"

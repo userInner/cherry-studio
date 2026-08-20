@@ -3,6 +3,7 @@ import type * as NodeModule from 'node:module'
 import os from 'node:os'
 import path from 'node:path'
 
+import { COMPUTER_APPROVAL_REQUIRED_TOOL_NAMES } from '@main/ai/mcp/servers/computer'
 import {
   ASSISTANT_APPROVAL_REQUIRED_RUNTIME_NAMES,
   ASSISTANT_FILE_APPROVAL_REQUIRED_RUNTIME_NAMES,
@@ -10,6 +11,7 @@ import {
   toCherryBuiltinRuntimeName
 } from '@main/ai/runtime/toolApproval/cherryBuiltinApproval'
 import { KB_MANAGE_TOOL_NAME } from '@shared/ai/builtinTools'
+import { buildMcpWireToolId } from '@shared/ai/tools/mcpSourcePolicy'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
@@ -2459,12 +2461,15 @@ describe('buildClaudeCodeSessionSettings', () => {
     // snapshot. The agentTools test proves those options gate kb_manage; this proves settingsBuilder
     // actually supplies them — dropping `.map(toCherryBuiltinRuntimeName)` or the exceptions fails here.
     const exceptions = CHERRY_BUILTIN_APPROVAL_REQUIRED_TOOL_NAMES.map(toCherryBuiltinRuntimeName)
+    const computerExceptions = COMPUTER_APPROVAL_REQUIRED_TOOL_NAMES.map((name) =>
+      buildMcpWireToolId('@cherry/computer', name)
+    )
     expect(exceptions).toContain(toCherryBuiltinRuntimeName(KB_MANAGE_TOOL_NAME))
     expect(mocks.createToolPolicySnapshot).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
         autoAllowRuntimeNames: expect.arrayContaining(['mcp__cherry-tools__notify']),
-        autoAllowRuntimeNameExceptions: exceptions
+        autoAllowRuntimeNameExceptions: expect.arrayContaining([...exceptions, ...computerExceptions])
       })
     )
     // No prefix-based auto-approval anywhere: a namespace prefix would silently pre-approve

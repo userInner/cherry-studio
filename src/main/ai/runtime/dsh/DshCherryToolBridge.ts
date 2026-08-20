@@ -4,6 +4,7 @@ import { application } from '@application'
 import type { BridgeToolCallResult, BridgeToolDescriptor } from '@cherrystudio/dsh-bridge'
 import { mcpServerService } from '@data/services/McpServerService'
 import { loggerService } from '@logger'
+import { COMPUTER_APPROVAL_REQUIRED_TOOL_NAMES } from '@main/ai/mcp/servers/computer'
 import type { AgentMcpServer } from '@main/ai/runtime/agentMcpServers'
 import {
   ASSISTANT_APPROVAL_REQUIRED_RUNTIME_NAMES,
@@ -67,7 +68,8 @@ export const DSH_AUTO_APPROVED_BRIDGED_TOOLS: ReadonlySet<string> = new Set([
 export const DSH_APPROVAL_REQUIRED_BRIDGED_TOOLS: ReadonlySet<string> = new Set([
   ...CHERRY_BUILTIN_APPROVAL_REQUIRED_TOOL_NAMES.map((name) => buildDshCherryToolName('cherry-tools', name)),
   ...ASSISTANT_APPROVAL_REQUIRED_RUNTIME_NAMES.map(toDshRuntimeName),
-  ...ASSISTANT_FILE_APPROVAL_REQUIRED_RUNTIME_NAMES.map(toDshRuntimeName)
+  ...ASSISTANT_FILE_APPROVAL_REQUIRED_RUNTIME_NAMES.map(toDshRuntimeName),
+  ...COMPUTER_APPROVAL_REQUIRED_TOOL_NAMES.map((name) => buildDshCherryToolName('@cherry/computer', name))
 ])
 
 /** Warm user-configured catalogs before the connection snapshot captures their tool schemas. */

@@ -13,6 +13,7 @@ import type {
 } from '@earendil-works/pi-coding-agent'
 import { loggerService } from '@logger'
 import { ensureAgentDataDirectory } from '@main/ai/agents/agentDataDirectory'
+import { COMPUTER_APPROVAL_REQUIRED_TOOL_NAMES } from '@main/ai/mcp/servers/computer'
 import { endAgentRuntimeSpan, startAgentRuntimeChildSpan } from '@main/ai/observability'
 import { buildAgentMcpServers } from '@main/ai/runtime/agentMcpServers'
 import { buildAgentRuntimePrompt } from '@main/ai/runtime/agentPrompt'
@@ -86,11 +87,13 @@ const PI_APPROVAL_REQUIRED_MCP_TOOLS = new Set([
   PI_TOOL_EXEC_TOOL_NAME,
   ...CHERRY_BUILTIN_APPROVAL_REQUIRED_TOOL_NAMES.map((name) => buildPiMcpToolName('cherry-tools', name)),
   ...ASSISTANT_APPROVAL_REQUIRED_RUNTIME_NAMES.map(toPiMcpRuntimeName),
-  ...ASSISTANT_FILE_APPROVAL_REQUIRED_RUNTIME_NAMES.map(toPiMcpRuntimeName)
+  ...ASSISTANT_FILE_APPROVAL_REQUIRED_RUNTIME_NAMES.map(toPiMcpRuntimeName),
+  ...COMPUTER_APPROVAL_REQUIRED_TOOL_NAMES.map((name) => buildPiMcpToolName('@cherry/computer', name))
 ])
-const PI_NON_BYPASSABLE_APPROVAL_TOOLS = new Set(
-  [SESSION_CREATE_TOOL_NAME, SESSION_SEND_TOOL_NAME].map((name) => buildPiMcpToolName('cherry-tools', name))
-)
+const PI_NON_BYPASSABLE_APPROVAL_TOOLS = new Set([
+  ...[SESSION_CREATE_TOOL_NAME, SESSION_SEND_TOOL_NAME].map((name) => buildPiMcpToolName('cherry-tools', name)),
+  ...COMPUTER_APPROVAL_REQUIRED_TOOL_NAMES.map((name) => buildPiMcpToolName('@cherry/computer', name))
+])
 interface PendingSteer {
   input: AgentRuntimeUserInput
 }
