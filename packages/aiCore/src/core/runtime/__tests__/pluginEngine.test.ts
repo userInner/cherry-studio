@@ -140,6 +140,28 @@ describe('PluginEngine', () => {
   })
 
   describe('Plugin Lifecycle - Non-Streaming', () => {
+    it('should expose the resolved language model to transformParams', async () => {
+      const transformParams = vi.fn().mockImplementation(async (params, context) => {
+        expect(context.model).toBe(mockLanguageModel)
+        return params
+      })
+      engine = new PluginEngine('openai', [
+        {
+          name: 'resolved-model-reader',
+          resolveModel: vi.fn().mockResolvedValue(mockLanguageModel),
+          transformParams
+        }
+      ])
+
+      await engine.executeWithPlugins(
+        'generateText',
+        { model: 'gpt-4', messages: [] },
+        vi.fn().mockResolvedValue({ text: 'test' })
+      )
+
+      expect(transformParams).toHaveBeenCalledOnce()
+    })
+
     it('should execute all plugin hooks in correct order', async () => {
       const executionOrder: string[] = []
 
@@ -621,6 +643,28 @@ describe('PluginEngine', () => {
   })
 
   describe('Image Model Execution', () => {
+    it('should expose the resolved image model to transformParams', async () => {
+      const transformParams = vi.fn().mockImplementation(async (params, context) => {
+        expect(context.model).toBe(mockImageModel)
+        return params
+      })
+      engine = new PluginEngine('openai', [
+        {
+          name: 'resolved-image-model-reader',
+          resolveModel: vi.fn().mockResolvedValue(mockImageModel),
+          transformParams
+        }
+      ])
+
+      await engine.executeImageWithPlugins(
+        'generateImage',
+        { model: 'dall-e-3', prompt: 'test' },
+        vi.fn().mockResolvedValue({ image: {} })
+      )
+
+      expect(transformParams).toHaveBeenCalledOnce()
+    })
+
     it('should execute image generation with plugins', async () => {
       const plugin: AiPlugin = {
         name: 'image-plugin',
@@ -723,7 +767,8 @@ describe('PluginEngine', () => {
       expect(configureContextSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           providerId: 'openai',
-          model: 'gpt-4'
+          model: mockLanguageModel,
+          originalParams: expect.objectContaining({ model: 'gpt-4' })
         })
       )
     })
