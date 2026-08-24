@@ -25,6 +25,7 @@ directly; edit the template instead, then run `pnpm build:builtin-knowledge`.
 Provider：mcp__assistant__product_info({ source: "manifest", section: "providers" })
 语言：mcp__assistant__product_info({ source: "manifest", section: "locales" })
 Agent / 频道 / 定时任务 / Code CLI：mcp__assistant__product_info({ source: "manifest", section: "agents" })
+核心功能默认值 / MCP 类型 / 知识库格式：mcp__assistant__product_info({ source: "manifest", section: "features" })
 ```
 
 不知道该查哪个 section 时，先调用紧凑索引：

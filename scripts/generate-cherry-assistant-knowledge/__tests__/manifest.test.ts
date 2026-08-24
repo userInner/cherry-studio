@@ -4,8 +4,11 @@ import * as path from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 import { appLanguageOptions } from '../../../src/renderer/i18n/languages'
+import { DEFAULT_CONTEXT_SETTINGS } from '../../../src/shared/data/types/contextSettings'
+import { McpServerTypeSchema } from '../../../src/shared/data/types/mcpServer'
 import { CodeCli } from '../../../src/shared/types/codeCli'
 import { COMMAND_DEFINITIONS } from '../../../src/shared/utils/command/definitions'
+import { knowledgeSupportedFileExts } from '../../../src/shared/utils/file'
 import { generateProductManifest, serializeProductManifest } from '../generators/manifest'
 
 describe('generateProductManifest', () => {
@@ -65,6 +68,23 @@ describe('generateProductManifest', () => {
     expect(new Set(manifest.agents.scheduleTriggerKinds).size).toBe(manifest.agents.scheduleTriggerKinds.length)
     expect(manifest.agents.codeCli.route).toBe(manifest.routes.primary.find(({ id }) => id === 'code_tools')?.path)
     expect(manifest.agents.codeCli.tools).toEqual(Object.values(CodeCli))
+  })
+
+  it('includes source-derived facts for core product features', () => {
+    const manifest = generateProductManifest()
+
+    expect(manifest.features.contextManagement).toEqual({
+      scope: 'global-and-assistant',
+      defaults: DEFAULT_CONTEXT_SETTINGS
+    })
+    expect(manifest.features.mcp).toEqual({
+      route: '/settings/mcp',
+      serverTypes: McpServerTypeSchema.options
+    })
+    expect(manifest.features.knowledgeBase).toEqual({
+      route: manifest.routes.primary.find(({ id }) => id === 'knowledge')?.path,
+      supportedFileExtensions: knowledgeSupportedFileExts
+    })
   })
 
   it('serializes the manifest as stable JSON', () => {

@@ -41,7 +41,7 @@ describe('Cherry Assistant guide', () => {
   it('uses current-package lookups instead of versioned product prose', () => {
     expect(guide).toContain('报告运行错误、连接失败、配置异常并需要诊断时触发')
     expect(guide).toContain('mcp__assistant__product_info({ source: "manifest" })')
-    for (const section of ['routes', 'commands', 'providers', 'locales', 'agents']) {
+    for (const section of ['routes', 'commands', 'providers', 'locales', 'agents', 'features']) {
       expect(guide).toContain(`source: "manifest", section: "${section}"`)
     }
     expect(guide).toContain('section: "all"')

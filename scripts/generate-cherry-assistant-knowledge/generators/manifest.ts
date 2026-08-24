@@ -4,8 +4,11 @@ import * as path from 'node:path'
 import { Node, type ObjectLiteralExpression, Project, SyntaxKind } from 'ts-morph'
 
 import { appLanguageOptions } from '../../../src/renderer/i18n/languages'
+import { DEFAULT_CONTEXT_SETTINGS } from '../../../src/shared/data/types/contextSettings'
+import { McpServerTypeSchema } from '../../../src/shared/data/types/mcpServer'
 import { CodeCli } from '../../../src/shared/types/codeCli'
 import { COMMAND_DEFINITIONS } from '../../../src/shared/utils/command/definitions'
+import { knowledgeSupportedFileExts } from '../../../src/shared/utils/file'
 
 const ROOT_DIR = path.resolve(__dirname, '..', '..', '..')
 const PACKAGE_JSON_FILE = path.join(ROOT_DIR, 'package.json')
@@ -61,6 +64,20 @@ export interface ProductManifest {
     codeCli: {
       route: string
       tools: string[]
+    }
+  }
+  features: {
+    contextManagement: {
+      scope: 'global-and-assistant'
+      defaults: typeof DEFAULT_CONTEXT_SETTINGS
+    }
+    mcp: {
+      route: string
+      serverTypes: string[]
+    }
+    knowledgeBase: {
+      route: string
+      supportedFileExtensions: string[]
     }
   }
 }
@@ -191,6 +208,29 @@ function readAgentCapabilities(primaryRoutes: ProductManifest['routes']['primary
   }
 }
 
+function requireRoute(primaryRoutes: ProductManifest['routes']['primary'], id: string): string {
+  const route = primaryRoutes.find((entry) => entry.id === id)?.path
+  if (!route) throw new Error(`SIDEBAR_APP_DEFINITIONS does not contain the ${id} route`)
+  return route
+}
+
+function readFeatureCatalog(primaryRoutes: ProductManifest['routes']['primary']): ProductManifest['features'] {
+  return {
+    contextManagement: {
+      scope: 'global-and-assistant',
+      defaults: structuredClone(DEFAULT_CONTEXT_SETTINGS)
+    },
+    mcp: {
+      route: '/settings/mcp',
+      serverTypes: [...McpServerTypeSchema.options]
+    },
+    knowledgeBase: {
+      route: requireRoute(primaryRoutes, 'knowledge'),
+      supportedFileExtensions: [...knowledgeSupportedFileExts]
+    }
+  }
+}
+
 export function generateProductManifest(): ProductManifest {
   const primaryRoutes = readPrimaryRoutes()
   return {
@@ -203,7 +243,8 @@ export function generateProductManifest(): ProductManifest {
     commands: JSON.parse(JSON.stringify(COMMAND_DEFINITIONS)) as ProductManifest['commands'],
     providers: readProviders(),
     locales: [...appLanguageOptions],
-    agents: readAgentCapabilities(primaryRoutes)
+    agents: readAgentCapabilities(primaryRoutes),
+    features: readFeatureCatalog(primaryRoutes)
   }
 }
 

@@ -789,5 +789,49 @@
         "pi"
       ]
     }
+  },
+  "features": {
+    "contextManagement": {
+      "scope": "global-and-assistant",
+      "defaults": {
+        "enabled": true,
+        "truncateThreshold": 50000,
+        "maxMessages": null,
+        "compress": {
+          "enabled": true,
+          "modelId": null
+        }
+      }
+    },
+    "mcp": {
+      "route": "/settings/mcp",
+      "serverTypes": [
+        "stdio",
+        "sse",
+        "streamableHttp",
+        "inMemory"
+      ]
+    },
+    "knowledgeBase": {
+      "route": "/app/knowledge",
+      "supportedFileExtensions": [
+        ".txt",
+        ".markdown",
+        ".md",
+        ".mdx",
+        ".pdf",
+        ".html",
+        ".htm",
+        ".xlsx",
+        ".xls",
+        ".docx",
+        ".csv",
+        ".doc",
+        ".pptx",
+        ".ppt",
+        ".epub",
+        ".draftsexport"
+      ]
+    }
   }
 }
