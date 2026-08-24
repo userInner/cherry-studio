@@ -10,6 +10,7 @@ import type { RelocationProgress } from '@shared/types/userDataRelocation'
 import { app } from 'electron'
 import * as z from 'zod'
 
+import { remapCopiedAgentWorkspacePaths } from './pathRemapping'
 import type { FailedRelocation, PendingRelocation, RelocationState } from './types'
 import {
   assertEffectiveSeparation,
@@ -339,6 +340,20 @@ async function executeRelocation(
     promoted = true
     await fsp.rm(path.join(workPath, RELOCATION_OWNER_MARKER), { force: true })
     await fsp.rmdir(workPath)
+    const sourceDatabase = application.getPath('app.database.file')
+    const databaseRelativePath = path.relative(pending.from, sourceDatabase)
+    if (!databaseRelativePath.startsWith(`..${path.sep}`) && !path.isAbsolute(databaseRelativePath)) {
+      const remappedWorkspaceCount = remapCopiedAgentWorkspacePaths(
+        path.join(pending.to, databaseRelativePath),
+        pending.from,
+        pending.to
+      )
+      if (remappedWorkspaceCount > 0) {
+        logger.info('Re-anchored managed Agent workspace paths during userData relocation', {
+          count: remappedWorkspaceCount
+        })
+      }
+    }
     commit()
   } catch (error) {
     const rollbackError = await rollbackCopy({
