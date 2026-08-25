@@ -278,6 +278,18 @@ describe('buildSystemPrompt — Agent System Prompt authority', () => {
     expect(text).not.toContain('{{username}}')
     expect(text).not.toContain('{{model_name}}')
   })
+
+  it('keeps an explicit Agent response language authoritative over the UI language default', async () => {
+    mockGetAppLanguage.mockReturnValueOnce('zh-CN')
+
+    const text = promptText(
+      await buildSystemPrompt(makeAgent({ instructions: 'All final outputs must be written in English.' }), '/tmp/cwd')
+    )
+
+    expect(text).toContain('Use Chinese (Simplified) as the default response language.')
+    expect(text).toContain('If the Agent System Prompt specifies another response language, follow it instead.')
+    expect(text).not.toContain('You must respond in Chinese (Simplified).')
+  })
 })
 
 describe('buildSystemPrompt — report_artifacts prompt', () => {
@@ -332,7 +344,7 @@ describe('buildSystemPrompt — cache-stable segment order', () => {
       'CONFIGURED_AGENT_INSTRUCTIONS',
       'WORKSPACE_INSTRUCTIONS',
       'PERSONA_AND_MEMORY_CONTEXT',
-      'IMPORTANT: You must respond in English.'
+      'Use English as the default response language.'
     ]
     const offsets = orderedMarkers.map((marker) => text.indexOf(marker))
 

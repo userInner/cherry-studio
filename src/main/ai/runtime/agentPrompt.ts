@@ -111,5 +111,7 @@ ${instructions}
 
 function getLanguageInstruction(): string {
   const englishName = languageEnglishNameMap[getAppLanguage()]
-  return englishName ? `IMPORTANT: You must respond in ${englishName}.` : ''
+  return englishName
+    ? `Use ${englishName} as the default response language. If the Agent System Prompt specifies another response language, follow it instead.`
+    : ''
 }

@@ -423,7 +423,10 @@ describe('PiRuntimeConnection', () => {
     expect(appendedSystemPrompt()).toContain('AGENT PROMPT')
     expect(appendedSystemPrompt()).toContain('<agent_instructions>\nBe helpful.\n</agent_instructions>')
     expect(appendedSystemPrompt()).toContain(REPORT_ARTIFACTS_PROMPT)
-    expect(appendedSystemPrompt()).toContain('IMPORTANT: You must respond in English.')
+    expect(appendedSystemPrompt()).toContain('Use English as the default response language.')
+    expect(appendedSystemPrompt()).toContain(
+      'If the Agent System Prompt specifies another response language, follow it instead.'
+    )
   })
 
   it('forwards the active Cherry proxy environment to Pi provider requests', async () => {
