@@ -113,7 +113,23 @@ vi.mock('@cherrystudio/ui', () => {
         {open && onOpenChange && <button type="button" aria-label="close dialog" onClick={() => onOpenChange(false)} />}
       </div>
     ),
-    DialogContent: passthrough('div'),
+    DialogContent: ({
+      children,
+      closeLabel,
+      closeOnOverlayClick,
+      ...props
+    }: {
+      children?: React.ReactNode
+      closeLabel?: string
+      closeOnOverlayClick?: boolean
+    }) => {
+      void closeOnOverlayClick
+      return (
+        <div data-close-label={closeLabel} {...props}>
+          {children}
+        </div>
+      )
+    },
     DialogHeader: passthrough('div'),
     DialogTitle: passthrough('h2'),
     EmptyState: ({ description }: { description?: React.ReactNode }) => <div>{description}</div>,
@@ -224,6 +240,12 @@ describe('ChannelDetail', () => {
         on: vi.fn(() => () => {})
       }
     } as never
+  })
+
+  it('localizes the close controls for the log and edit dialogs', () => {
+    render(<ChannelDetail channelDef={channelDef} />)
+
+    expect(document.querySelectorAll('[data-close-label="common.close"]')).toHaveLength(2)
   })
 
   it('creates new channels inactive so empty default credentials pass server validation', async () => {

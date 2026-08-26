@@ -49,6 +49,18 @@ function DialogWithSelect({ onOpenChange }: { onOpenChange: (open: boolean) => v
 }
 
 describe('Dialog primitive', () => {
+  it('uses the supplied accessible name for the close control', () => {
+    render(
+      <Dialog open>
+        <DialogContent closeLabel="关闭" aria-describedby={undefined}>
+          <DialogTitle>配置项目</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    )
+
+    expect(screen.getByRole('button', { name: '关闭' })).toBeInTheDocument()
+  })
+
   it('keeps nested dialogs in the page dialog portal instead of the parent dialog content', () => {
     const pagePortalContainer = document.createElement('div')
     document.body.appendChild(pagePortalContainer)
